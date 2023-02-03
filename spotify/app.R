@@ -4,15 +4,15 @@ library(DT)
 library(stringr)
 library(dplyr)
 library(tools)
+
 data = read.csv("top50spotify.csv")
 
 
 # Define UI for application that plots features of top 50 spotify songs --------
 ui <- fluidPage(
   
-  shinythemes::themeSelector(),
   
-  theme = shinythemes::shinytheme("united"),
+  theme = shinythemes::shinytheme("lumen"),
 
     # Application title
     titlePanel("Top 50 Songs on Spotify from 2010-2019"),
@@ -24,13 +24,13 @@ ui <- fluidPage(
           selectInput(inputId = "x", 
                       label = "X-axis:",
                       choices = c("duration",
-                                  "bpm",
+                                  "beats per minute" = "bpm",
                                   "energy"), 
                       selected = "duration"),
           
           selectInput(inputId = "y", 
                       label = "Y-axis:",
-                      choices = c("popular"), 
+                      choices = c("Popularity" = "popular"), 
                       selected = "popular"),
           
           selectInput(inputId = "z", 
@@ -55,7 +55,7 @@ ui <- fluidPage(
                       label = "X-axis:",
                       choices = c("loudness",
                                   "liveness",
-                                  "dance", 
+                                  "Danceability" = "dance", 
                                   "valence", 
                                   "acoustics",
                                   "speechiness"), 
@@ -63,7 +63,7 @@ ui <- fluidPage(
           
           selectInput(inputId = "y1", 
                       label = "Y-axis:",
-                      choices = c("popular"), 
+                      choices = c("Popularity"= "popular"), 
                       selected = "popular"),
           
           hr(),
@@ -88,7 +88,12 @@ ui <- fluidPage(
           br(), br(),
           
           # Show data table ---------------------------------------------
-          DT::dataTableOutput(outputId = "data")
+          DT::dataTableOutput(outputId = "data"),
+          
+          br(), br(),
+          
+          downloadButton(outputId = "downloadData", label = "Download", class = NULL)
+          
         )
     )
 )
@@ -106,7 +111,7 @@ server <- function(input, output) {
   output$scatterplot <- renderPlot({
     ggplot(data = data_subset(), aes_string(x = input$x, y = input$y,
                                               color = input$z)) +
-      geom_point() +
+      geom_point(size = 2) +
       labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),
            y = toTitleCase(str_replace_all(input$y, "_", " ")))
   })
@@ -136,6 +141,14 @@ server <- function(input, output) {
                     rownames = FALSE)
     }
   )
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste('data-', Sys.Date(), '.csv', sep='')
+      },
+       content = function(con) {
+        write.csv(data, con)
+    }
+    )
 }
 
     
