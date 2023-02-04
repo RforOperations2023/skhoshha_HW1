@@ -7,6 +7,7 @@ library(tools)
 
 data = read.csv("top50spotify.csv")
 
+data$year = as.factor(data$year)
 
 # Define UI for application that plots features of top 50 spotify songs --------
 ui <- fluidPage(
@@ -68,6 +69,13 @@ ui <- fluidPage(
           
           hr(),
           
+          selectInput(inputId = "x2", 
+                      label = "X-axis:",
+                      choices = "year", 
+                      selected = "popular"),
+          
+          hr(),
+          
           checkboxInput(inputId = "show_data",
                         label = "Show data table",
                         value = TRUE)
@@ -84,6 +92,10 @@ ui <- fluidPage(
           br(), br(),    # a little bit of visual separation
           
           plotOutput(outputId = "bargraph"),
+          
+          br(), br(),
+          
+          plotOutput(outputId = "violin"),
           
           br(), br(),
           
@@ -121,6 +133,14 @@ server <- function(input, output) {
     )) +
       geom_bar(stat="identity", fill="steelblue") +
       labs(x = toTitleCase(str_replace_all(input$x1, "_", " ")),
+           y = toTitleCase(str_replace_all(input$y1, "_", " ")))
+  })
+  
+  output$violin <- renderPlot({
+    ggplot(data = data_subset(), aes_string(x=input$x2, y= input$y1,
+                                            fill = input$x2)) + 
+      geom_violin() +
+      labs(x = toTitleCase(str_replace_all(input$x2, "_", " ")),
            y = toTitleCase(str_replace_all(input$y1, "_", " ")))
   })
   
