@@ -1,0 +1,13 @@
+name: Top50Spotify
+title: Top50Spotify
+username:
+account: skhoshha
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8220502
+bundleId: 6808369
+url: https://skhoshha.shinyapps.io/Top50Spotify/
+when: 1675470040.09966
+lastSyncTime: 1675470040.09966
+asMultiple: FALSE
+asStatic: FALSE
